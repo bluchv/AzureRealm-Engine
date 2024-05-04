@@ -1,0 +1,10 @@
+[package]
+name = "pc/framework"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Network = "ffrostflame/bridgenet2@1.0.0"
+Promise = "evaera/promise@4.0.0"
+Trove = "sleitnick/trove@1.2.0"

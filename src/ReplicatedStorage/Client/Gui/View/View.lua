@@ -1,0 +1,3 @@
+local View = {}
+
+return View
