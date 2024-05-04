@@ -15,7 +15,7 @@ local ModuleCache = {}
 local Initialized = false
 local StartedModules = false
 local GuiLoaded = false
-local Server = {}
+local AzureRealmEngineServer = {}
 
 local function LoadModule(instance)
 	if not instance:IsA("ModuleScript") then
@@ -87,16 +87,16 @@ local function StartAllModules()
 	end
 end
 
-function Server:Start()
+function AzureRealmEngineServer:Start()
 	if Initialized then
 		error(`Already started FrameworkServer!`)
 	end
 	Initialized = true
 	print(`[Initializing] server-framework.`)
 
-	Server.Packages = ReplicatedStorage.Packages
+	AzureRealmEngineServer.Packages = ReplicatedStorage.Packages
 
-	Server:LoadGUI()
+	AzureRealmEngineServer:LoadGUI()
 
 	local InitializeLogger = RuntimeLogger.new()
 	require(Packages.Network)
@@ -105,7 +105,7 @@ function Server:Start()
 	InitializeLogger:PrintTime(`[Initializing] Finished initializing server-framework, took %s seconds.`)
 end
 
-function Server:LoadGUI()
+function AzureRealmEngineServer:LoadGUI()
 	if GuiLoaded then
 		error(`Already loaded GUI!`)
 	end
@@ -118,4 +118,4 @@ function Server:LoadGUI()
 	end
 end
 
-return Server
+return AzureRealmEngineServer

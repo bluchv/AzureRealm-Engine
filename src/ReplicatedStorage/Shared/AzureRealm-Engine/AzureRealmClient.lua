@@ -24,7 +24,7 @@ local EventKeyMapping = {
 local Initialized = false
 local StartedModules = false
 local GuiLoaded = false
-local Client = {
+local AzureRealmEngineClient = {
 	Packages = ReplicatedStorage.Packages,
 }
 
@@ -130,7 +130,7 @@ local function HandleCharacter()
 	end
 end
 
-function Client:Start()
+function AzureRealmEngineClient:Start()
 	if Initialized then
 		error(`Already started FrameworkClient!`)
 	end
@@ -141,9 +141,9 @@ function Client:Start()
 		RunService.RenderStepped:Wait()
 	end
 
-	Client.Model = require(ClientModulesDirectory.Gui.Model.Model)
-	Client.View = require(ClientModulesDirectory.Gui.View.View)
-	Client.Controller = require(ClientModulesDirectory.Gui.Controller.Controller)
+	AzureRealmEngineClient.Model = require(ClientModulesDirectory.Gui.Model.Model)
+	AzureRealmEngineClient.View = require(ClientModulesDirectory.Gui.View.View)
+	AzureRealmEngineClient.Controller = require(ClientModulesDirectory.Gui.Controller.Controller)
 
 	InputService.InputBegan:Connect(function(...)
 		for _, module in EventKeyMapping.InputBegan do
@@ -177,7 +177,7 @@ function Client:Start()
 	InitializeLogger:PrintTime(`[Initializing] Finished initializing client-framework, took %s seconds.`)
 end
 
-function Client:LoadGUI()
+function AzureRealmEngineClient:LoadGUI()
 	if GuiLoaded then
 		error(`Already loaded GUI!`)
 	end
@@ -190,8 +190,8 @@ function Client:LoadGUI()
 	end
 end
 
-function Client:Test()
+function AzureRealmEngineClient:Test()
 	print("Test method from framework-core")
 end
 
-return Client
+return AzureRealmEngineClient
