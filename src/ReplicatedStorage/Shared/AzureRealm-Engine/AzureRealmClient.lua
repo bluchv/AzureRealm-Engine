@@ -28,6 +28,14 @@ local AzureRealmEngineClient = {
 	Packages = ReplicatedStorage.Packages,
 }
 
+local function Log(msg: string)
+	print(`[AzureRealm-Engine] {msg}`)
+end
+
+local function WarnLog(msg: string)
+	warn(`[AzureRealm-Engine] {msg}`)
+end
+
 local function LoadModule(instance)
 	if not instance:IsA("ModuleScript") then
 		return
@@ -43,7 +51,7 @@ local function LoadModule(instance)
 	end)
 
 	if not LoadSucess then
-		warn(`Failed to load module "{instance.Name}" ({instance:GetFullName()}).\n{LoadResult}`)
+		WarnLog(`Failed to load module "{instance.Name}" ({instance:GetFullName()}).\n{LoadResult}`)
 		return
 	end
 
@@ -53,7 +61,7 @@ local function LoadModule(instance)
 		end)
 
 		if not InitSuccess then
-			warn(`Init function failure on "{instance.Name}" ({instance:GetFullName()}). \n{InitError}`)
+			WarnLog(`Init function failure on "{instance.Name}" ({instance:GetFullName()}). \n{InitError}`)
 			return
 		end
 	end
@@ -65,7 +73,7 @@ local function LoadModule(instance)
 	end
 
 	ModuleCache[instance.Name] = LoadResult
-	LoadTimeLogger:PrintTime(`[Initialized] {instance.Name}, took %s seconds.`)
+	LoadTimeLogger:PrintTime(`[AzureRealm-Engine] Initialized {instance.Name} in %s seconds`)
 end
 
 local function LoadChildrenModules(parent)
@@ -135,7 +143,11 @@ function AzureRealmEngineClient:Start()
 		error(`Already started FrameworkClient!`)
 	end
 	Initialized = true
-	print(`[Initializing] client-framework.`)
+	-- print(`[Initializing] AzureRealm-Engine.`)
+	Log("Initializing")
+	-- print("")
+	print(string.rep("-", 30))
+	-- print("")
 
 	while not game:IsLoaded() do
 		RunService.RenderStepped:Wait()
@@ -174,7 +186,10 @@ function AzureRealmEngineClient:Start()
 	if Player.Character then
 		HandleCharacter()
 	end
-	InitializeLogger:PrintTime(`[Initializing] Finished initializing client-framework, took %s seconds.`)
+	-- print("")
+	print(string.rep("-", 30))
+	-- print("")
+	InitializeLogger:PrintTime(`[AzureRealm-Engine] Initialized in %s seconds`)
 end
 
 function AzureRealmEngineClient:LoadGUI()
@@ -191,7 +206,8 @@ function AzureRealmEngineClient:LoadGUI()
 end
 
 function AzureRealmEngineClient:Test()
-	print("Test method from framework-core")
+	-- print("Test method from AzureRealm-Engine")
+	Log("Test Method")
 end
 
 return AzureRealmEngineClient

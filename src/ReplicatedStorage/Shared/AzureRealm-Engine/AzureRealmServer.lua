@@ -11,11 +11,30 @@ local ReplicatedUIDirectory = ReplicatedStorage.UI
 local RuntimeLogger = require(SharedModulesDirectory.RuntimeLogger)
 
 local ModuleCache = {}
+local EventKeyMapping = {
+	CharacterAdded = {},
+	CharacterRemoved = {},
+	CharacterDied = {},
+
+	InputBegan = {},
+	InputEnded = {},
+}
 
 local Initialized = false
 local StartedModules = false
 local GuiLoaded = false
-local AzureRealmEngineServer = {}
+
+local AzureRealmEngineServer = {
+	Packages = ReplicatedStorage.Packages,
+}
+
+local function Log(msg: string)
+	print(`[AzureRealm-Engine] {msg}`)
+end
+
+local function WarnLog(msg: string)
+	warn(`[AzureRealm-Engine] {msg}`)
+end
 
 local function LoadModule(instance)
 	if not instance:IsA("ModuleScript") then
@@ -32,7 +51,7 @@ local function LoadModule(instance)
 	end)
 
 	if not LoadSucess then
-		warn(`Failed to load module "{instance.Name}" ({instance:GetFullName()}).\n{LoadResult}`)
+		WarnLog(`Failed to load module "{instance.Name}" ({instance:GetFullName()}).\n{LoadResult}`)
 		return
 	end
 
@@ -42,13 +61,19 @@ local function LoadModule(instance)
 		end)
 
 		if not InitSuccess then
-			warn(`Init function failure on "{instance.Name}" ({instance:GetFullName()}). \n{InitError}`)
+			WarnLog(`Init function failure on "{instance.Name}" ({instance:GetFullName()}). \n{InitError}`)
 			return
 		end
 	end
 
+	for index, _ in EventKeyMapping do
+		if LoadResult[index] then
+			table.insert(EventKeyMapping[index], LoadResult)
+		end
+	end
+
 	ModuleCache[instance.Name] = LoadResult
-	LoadTimeLogger:PrintTime(`[Initialized] {instance.Name}, took %s seconds.`)
+	LoadTimeLogger:PrintTime(`[AzureRealm-Engine] Initialized {instance.Name} in %s seconds`)
 end
 
 local function LoadChildrenModules(parent)
@@ -89,12 +114,14 @@ end
 
 function AzureRealmEngineServer:Start()
 	if Initialized then
-		error(`Already started FrameworkServer!`)
+		error(`Already started FrameworkClient!`)
 	end
 	Initialized = true
-	print(`[Initializing] server-framework.`)
-
-	AzureRealmEngineServer.Packages = ReplicatedStorage.Packages
+	-- print(`[Initializing] AzureRealm-Engine.`)
+	Log("Initializing")
+	-- print("")
+	print(string.rep("-", 30))
+	-- print("")
 
 	AzureRealmEngineServer:LoadGUI()
 
@@ -102,7 +129,11 @@ function AzureRealmEngineServer:Start()
 	require(Packages.Network)
 	LoadChildrenModules(ServerModulesDirectory.Game)
 	StartAllModules()
-	InitializeLogger:PrintTime(`[Initializing] Finished initializing server-framework, took %s seconds.`)
+
+	-- print("")
+	print(string.rep("-", 30))
+	-- print("")
+	InitializeLogger:PrintTime(`[AzureRealm-Engine] Initialized in %s seconds`)
 end
 
 function AzureRealmEngineServer:LoadGUI()
