@@ -6,7 +6,7 @@ local StarterGui = game:GetService("StarterGui")
 local ReplicatedModulesDirectory = ReplicatedStorage
 local SharedModulesDirectory = ReplicatedModulesDirectory.Shared
 local ServerModulesDirectory = ServerScriptService
-local Packages = ReplicatedStorage.Packages
+local _packages = ReplicatedStorage.Packages
 local ReplicatedUIDirectory = ReplicatedStorage.UI
 
 local AzureLogger = require(script.Parent.AzureLogger)
@@ -108,9 +108,7 @@ function AzureRealmEngineServer:Start()
 	end
 	Initialized = true
 	AzureLogger:Log("Initializing")
-	-- print("")
 	print(string.rep("-", 30))
-	-- print("")
 
 	Players.PlayerAdded:Connect(function(...)
 		for _, module in EventKeyMapping.PlayerAdded do
@@ -128,7 +126,6 @@ function AzureRealmEngineServer:Start()
 	AzureRealmEngineServer:LoadGUI()
 
 	local InitializeLogger = RuntimeLogger.new()
-	require(Packages.Network)
 	LoadChildrenModules(ServerModulesDirectory.Game)
 	StartAllModules()
 
@@ -138,9 +135,7 @@ function AzureRealmEngineServer:Start()
 		end
 	end
 
-	-- print("")
 	print(string.rep("-", 30))
-	-- print("")
 	InitializeLogger:PrintTime(`[AzureRealm-Engine] Initialized in %s seconds`)
 end
 

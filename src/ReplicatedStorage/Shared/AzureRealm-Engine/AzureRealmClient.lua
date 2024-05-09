@@ -5,7 +5,7 @@ local Player = game:GetService("Players").LocalPlayer
 
 local SharedModulesDirectory = ReplicatedStorage:WaitForChild("Shared")
 local ClientModulesDirectory = ReplicatedStorage:WaitForChild("Client")
-local Packages = ReplicatedStorage:WaitForChild("Packages")
+local _packages = ReplicatedStorage:WaitForChild("Packages")
 local ReplicatedUIDirectory = ReplicatedStorage:WaitForChild("UI")
 local GuiDirectory = Player.PlayerGui
 
@@ -138,9 +138,7 @@ function AzureRealmEngineClient:Start()
 	Initialized = true
 
 	AzureLogger:Log("Initializing")
-	-- print("")
 	print(string.rep("-", 30))
-	-- print("")
 
 	while not game:IsLoaded() do
 		RunService.RenderStepped:Wait()
@@ -180,9 +178,7 @@ function AzureRealmEngineClient:Start()
 	if Player.Character then
 		HandleCharacter()
 	end
-	-- print("")
 	print(string.rep("-", 30))
-	-- print("")
 	InitializeLogger:PrintTime(`[AzureRealm-Engine] Initialized in %s seconds`)
 end
 
@@ -200,7 +196,6 @@ function AzureRealmEngineClient:LoadGUI()
 end
 
 function AzureRealmEngineClient:Test()
-	-- print("Test method from AzureRealm-Engine")
 	AzureLogger:Log("Test Method")
 end
 
