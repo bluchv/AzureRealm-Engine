@@ -9,6 +9,7 @@ local Packages = ReplicatedStorage:WaitForChild("Packages")
 local ReplicatedUIDirectory = ReplicatedStorage:WaitForChild("UI")
 local GuiDirectory = Player.PlayerGui
 
+local AzureLogger = require(script.Parent.AzureLogger)
 local RuntimeLogger = require(SharedModulesDirectory:WaitForChild("RuntimeLogger"))
 
 local ModuleCache = {}
@@ -28,14 +29,6 @@ local AzureRealmEngineClient = {
 	Packages = ReplicatedStorage.Packages,
 }
 
-local function Log(msg: string)
-	print(`[AzureRealm-Engine] {msg}`)
-end
-
-local function WarnLog(msg: string)
-	warn(`[AzureRealm-Engine] {msg}`)
-end
-
 local function LoadModule(instance)
 	if not instance:IsA("ModuleScript") then
 		return
@@ -51,7 +44,7 @@ local function LoadModule(instance)
 	end)
 
 	if not LoadSucess then
-		WarnLog(`Failed to load module "{instance.Name}" ({instance:GetFullName()}).\n{LoadResult}`)
+		AzureLogger:Warn(`Failed to load module "{instance.Name}" ({instance:GetFullName()}).\n{LoadResult}`)
 		return
 	end
 
@@ -61,7 +54,7 @@ local function LoadModule(instance)
 		end)
 
 		if not InitSuccess then
-			WarnLog(`Init function failure on "{instance.Name}" ({instance:GetFullName()}). \n{InitError}`)
+			AzureLogger:Warn(`Init function failure on "{instance.Name}" ({instance:GetFullName()}). \n{InitError}`)
 			return
 		end
 	end
@@ -143,8 +136,8 @@ function AzureRealmEngineClient:Start()
 		error(`Already started FrameworkClient!`)
 	end
 	Initialized = true
-	-- print(`[Initializing] AzureRealm-Engine.`)
-	Log("Initializing")
+
+	AzureLogger:Log("Initializing")
 	-- print("")
 	print(string.rep("-", 30))
 	-- print("")
@@ -152,6 +145,9 @@ function AzureRealmEngineClient:Start()
 	while not game:IsLoaded() do
 		RunService.RenderStepped:Wait()
 	end
+
+	AzureRealmEngineClient.Packets = require(script.Parent.AzurePackets)
+	AzureRealmEngineClient:LoadGUI()
 
 	AzureRealmEngineClient.Model = require(ClientModulesDirectory.Gui.Model.Model)
 	AzureRealmEngineClient.View = require(ClientModulesDirectory.Gui.View.View)
@@ -170,7 +166,6 @@ function AzureRealmEngineClient:Start()
 	end)
 
 	Player.CharacterAdded:Connect(HandleCharacter)
-
 	Player.CharacterRemoving:Connect(function()
 		for _, module in EventKeyMapping.CharacterRemoved do
 			task.spawn(module.CharacterRemoved, module)
@@ -178,7 +173,6 @@ function AzureRealmEngineClient:Start()
 	end)
 
 	local InitializeLogger = RuntimeLogger.new()
-	require(Packages.Network)
 	LoadChildrenModules(ClientModulesDirectory.Game)
 	LoadChildrenModules(ClientModulesDirectory.Gui)
 	StartAllModules()
@@ -207,7 +201,7 @@ end
 
 function AzureRealmEngineClient:Test()
 	-- print("Test method from AzureRealm-Engine")
-	Log("Test Method")
+	AzureLogger:Log("Test Method")
 end
 
 return AzureRealmEngineClient

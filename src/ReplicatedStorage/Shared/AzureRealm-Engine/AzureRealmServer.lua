@@ -1,5 +1,6 @@
 local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
 
 local ReplicatedModulesDirectory = ReplicatedStorage
@@ -8,16 +9,13 @@ local ServerModulesDirectory = ServerScriptService
 local Packages = ReplicatedStorage.Packages
 local ReplicatedUIDirectory = ReplicatedStorage.UI
 
+local AzureLogger = require(script.Parent.AzureLogger)
 local RuntimeLogger = require(SharedModulesDirectory.RuntimeLogger)
 
 local ModuleCache = {}
 local EventKeyMapping = {
-	CharacterAdded = {},
-	CharacterRemoved = {},
-	CharacterDied = {},
-
-	InputBegan = {},
-	InputEnded = {},
+	PlayerAdded = {},
+	PlayerRemoving = {},
 }
 
 local Initialized = false
@@ -27,14 +25,6 @@ local GuiLoaded = false
 local AzureRealmEngineServer = {
 	Packages = ReplicatedStorage.Packages,
 }
-
-local function Log(msg: string)
-	print(`[AzureRealm-Engine] {msg}`)
-end
-
-local function WarnLog(msg: string)
-	warn(`[AzureRealm-Engine] {msg}`)
-end
 
 local function LoadModule(instance)
 	if not instance:IsA("ModuleScript") then
@@ -51,7 +41,7 @@ local function LoadModule(instance)
 	end)
 
 	if not LoadSucess then
-		WarnLog(`Failed to load module "{instance.Name}" ({instance:GetFullName()}).\n{LoadResult}`)
+		AzureLogger:Warn(`Failed to load module "{instance.Name}" ({instance:GetFullName()}).\n{LoadResult}`)
 		return
 	end
 
@@ -61,7 +51,7 @@ local function LoadModule(instance)
 		end)
 
 		if not InitSuccess then
-			WarnLog(`Init function failure on "{instance.Name}" ({instance:GetFullName()}). \n{InitError}`)
+			AzureLogger:Warn(`Init function failure on "{instance.Name}" ({instance:GetFullName()}). \n{InitError}`)
 			return
 		end
 	end
@@ -117,18 +107,36 @@ function AzureRealmEngineServer:Start()
 		error(`Already started FrameworkClient!`)
 	end
 	Initialized = true
-	-- print(`[Initializing] AzureRealm-Engine.`)
-	Log("Initializing")
+	AzureLogger:Log("Initializing")
 	-- print("")
 	print(string.rep("-", 30))
 	-- print("")
 
+	Players.PlayerAdded:Connect(function(...)
+		for _, module in EventKeyMapping.PlayerAdded do
+			task.spawn(module.PlayerAdded, module, ...)
+		end
+	end)
+
+	Players.PlayerRemoving:Connect(function(...)
+		for _, module in EventKeyMapping.PlayerRemoving do
+			task.spawn(module.PlayerRemoving, module, ...)
+		end
+	end)
+
+	AzureRealmEngineServer.Packets = require(script.Parent.AzurePackets)
 	AzureRealmEngineServer:LoadGUI()
 
 	local InitializeLogger = RuntimeLogger.new()
 	require(Packages.Network)
 	LoadChildrenModules(ServerModulesDirectory.Game)
 	StartAllModules()
+
+	for _, player in Players:GetPlayers() do
+		for _, module in EventKeyMapping.PlayerAdded do
+			task.spawn(module.PlayerAdded, module, player)
+		end
+	end
 
 	-- print("")
 	print(string.rep("-", 30))

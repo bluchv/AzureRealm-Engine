@@ -8,29 +8,14 @@ version = "4.0.0"
 dependencies = []
 
 [[package]]
-name = "ffrostflame/bridgenet2"
-version = "1.0.0"
-dependencies = [["RemotePacketSizeCounter", "pysephwasntavailable/remotepacketsizecounter@2.4.1"], ["TableKit", "ffrostflame/tablekit@0.2.4"], ["wallyInstanceManager", "ffrostflame/wally-instance-manager@0.1.0"]]
-
-[[package]]
-name = "ffrostflame/tablekit"
-version = "0.2.4"
-dependencies = []
-
-[[package]]
-name = "ffrostflame/wally-instance-manager"
-version = "0.1.0"
+name = "ffrostflame/bytenet"
+version = "0.4.5"
 dependencies = []
 
 [[package]]
 name = "pc/framework"
 version = "0.1.0"
-dependencies = [["Network", "ffrostflame/bridgenet2@1.0.0"], ["Promise", "evaera/promise@4.0.0"], ["Trove", "sleitnick/trove@1.2.0"]]
-
-[[package]]
-name = "pysephwasntavailable/remotepacketsizecounter"
-version = "2.4.1"
-dependencies = []
+dependencies = [["Network", "ffrostflame/bytenet@0.4.5"], ["Promise", "evaera/promise@4.0.0"], ["Trove", "sleitnick/trove@1.2.0"]]
 
 [[package]]
 name = "sleitnick/trove"

@@ -2,6 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Player = game:GetService("Players").LocalPlayer
 
+local Gui = ReplicatedStorage.Client.Gui
+
+local GuiController = require(Gui.Controller.Controller)
 local Trove = require(ReplicatedStorage.Packages.Trove).new()
 local SprintMechanic = require(script.Sprint)
 local Camera = require(script.Parent.Camera)
@@ -35,6 +38,7 @@ function CharacterModule:InputBegan(input: InputObject, gp: boolean)
 
 	if input.KeyCode == Enum.KeyCode.LeftShift then
 		SprintMechanic:Toggle(true, CharacterModule:GetHumanoid()):andThen(function(isSprinting: boolean)
+			GuiController:UpdateSprinting(isSprinting)
 			if isSprinting and CharacterModule:IsMoving() then
 				Camera:TweenFieldOfView(80, 0.3)
 			end
@@ -45,6 +49,7 @@ end
 function CharacterModule:InputEnded(input: InputObject)
 	if input.KeyCode == Enum.KeyCode.LeftShift then
 		SprintMechanic:Toggle(false, CharacterModule:GetHumanoid()):andThen(function(isSprinting: boolean)
+			GuiController:UpdateSprinting(isSprinting)
 			if not isSprinting then
 				Camera:TweenFieldOfView(70, 1)
 			end
