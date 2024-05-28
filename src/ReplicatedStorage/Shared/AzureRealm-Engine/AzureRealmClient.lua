@@ -173,6 +173,9 @@ function AzureRealmEngineClient:Start()
 	local InitializeLogger = RuntimeLogger.new()
 	LoadChildrenModules(ClientModulesDirectory.Game)
 	LoadChildrenModules(ClientModulesDirectory.Gui)
+	if AzureRealmEngineClient.Controller.Start then
+		AzureRealmEngineClient.Controller:Start()
+	end
 	StartAllModules()
 
 	if Player.Character then

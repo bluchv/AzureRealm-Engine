@@ -9,7 +9,7 @@ local Sprint = {}
 function Sprint:Toggle(toggled: boolean, humanoid: Humanoid?)
 	return Promise.new(function(resolve)
 		local targetSpeed = if toggled then 32 else 16
-		if toggled == IsSprinting then
+		if toggled == IsSprinting or toggled and humanoid and humanoid:GetState() == Enum.HumanoidStateType.Dead then
 			return resolve(false)
 		end
 
